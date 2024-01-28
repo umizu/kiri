@@ -1,5 +1,6 @@
 using Kiri.Api.Endpoints;
 using Kiri.Api.Middlewares;
+using Kiri.Api.Services;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,8 @@ builder.Host.UseSerilog((ctx, cfg) =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 var app = builder.Build();
