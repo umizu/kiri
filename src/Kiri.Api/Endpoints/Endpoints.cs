@@ -16,10 +16,9 @@ public static class Endpoints
             [FromServices] IUrlShortenerService shortenerService) =>
         {
             if (!Uri.TryCreate(req.Url, UriKind.Absolute, out _))
-                return Results.BadRequest("Invalid URL");
+                return Results.BadRequest("invalid url");
 
             var code = await shortenerService.ShortenAsync(req.Url);
-
             var url = $"{ctx.Request.Scheme}://{ctx.Request.Host}/{code}";
             return Results.Ok(new ShortenUrlResponse(url));
         });
@@ -31,7 +30,6 @@ public static class Endpoints
             if (await shortenedUrlRepo.GetByCodeAsync(code)
                     is not ShortenedUrl shortenedUrl)
                 return Results.NotFound();
-
             return Results.Redirect(shortenedUrl.LongUrl);
         });
     }
