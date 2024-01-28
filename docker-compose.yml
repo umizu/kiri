@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  url-shortener-db:
+    hostname: kiri.db
+    image: postgres:16.1-alpine3.19
+    ports:
+      - 9001:5432
+    restart: always
+    environment:
+      POSTGRES_USER: kiri-dev
+      POSTGRES_PASSWORD: kiri-pass
+      POSTGRES_DB: kiri-dev
+    volumes:
+      - url-shortener-db:/var/lib/postgresql/data
+
+volumes:
+  url-shortener-db:
+    driver: local

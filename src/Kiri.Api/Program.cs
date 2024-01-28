@@ -1,5 +1,8 @@
+using System.Security.Cryptography;
+using Kiri.Api.Data;
 using Kiri.Api.Endpoints;
 using Kiri.Api.Middlewares;
+using Kiri.Api.Repositories;
 using Kiri.Api.Services;
 using Serilog;
 
@@ -11,7 +14,14 @@ builder.Host.UseSerilog((ctx, cfg) =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>()
+    .AddSingleton<IUrlShortenerService, UrlShortenerService>()
+    .AddSingleton<IShortenedUrlService, ShortenedUrlService>()
+    .AddSingleton<IShortenedUrlRepo, ShortenedUrlRepo>()
+    .AddSingleton<DbInitializer>()
+    .AddSingleton<IDbConnectionFactory>(_ => new PgsqlConnectionFactory(
+        builder.Configuration.GetValue<string>("Database:ConnectionString")!));
+        
 builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 var app = builder.Build();
@@ -24,4 +34,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseEndpoints();
+var dbInitializer = app.Services.GetRequiredService<DbInitializer>();
+await dbInitializer.InitializeAsync();
 app.Run();
