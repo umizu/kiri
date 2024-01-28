@@ -1,6 +1,19 @@
 version: "3.9"
 
 services:
+  url-shortener-api:
+    hostname: kiri.api
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    ports:
+      - 9000:80
+    restart: always
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=DockerDev
+    depends_on:
+      - url-shortener-db
   url-shortener-db:
     hostname: kiri.db
     image: postgres:16.1-alpine3.19
