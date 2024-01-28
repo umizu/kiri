@@ -11,7 +11,7 @@ services:
     restart: always
     environment:
       - ASPNETCORE_URLS=http://+:80
-      - ASPNETCORE_ENVIRONMENT=DockerDev
+      - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
       - url-shortener-db
   url-shortener-db:

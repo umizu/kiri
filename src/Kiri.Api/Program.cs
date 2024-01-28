@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using Kiri.Api.Data;
 using Kiri.Api.Endpoints;
 using Kiri.Api.Middlewares;
@@ -21,13 +20,14 @@ builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>()
     .AddSingleton<DbInitializer>()
     .AddSingleton<IDbConnectionFactory>(_ => new PgsqlConnectionFactory(
         builder.Configuration.GetValue<string>("Database:ConnectionString")!));
-        
+
 builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 var app = builder.Build();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment()
+    || app.Environment.IsEnvironment("Local"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();
